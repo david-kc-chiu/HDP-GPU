@@ -11,62 +11,36 @@ amb-db:
   volumes:
   - /data/ambari-server/pgsql/data:/var/lib/postgresql/data
 amb-agent:
+  dns_search:
+  - service.consul
+  - node.dc1.consul
   labels:
+    io.rancher.scheduler.global: 'true'
     io.rancher.container.pull_image: always
-    io.rancher.scheduler.affinity:container_label_soft_ne: io.rancher.stack_service.name=$${stack_name}/$${service_name}
+  dns:
+  - 10.42.52.130
   command:
   - systemd.setenv=CLOUD_PLATFORM=RANCHER
-#  - systemd.setenv=USE_CONSUL_DNS=false
-#  - systemd.setenv=AMBARI_SERVER_ADDR=amb-server
-#  - systemd.setenv=CONSUL_DNS_IP=${consul_dns_ip}
-  image: cloudchchen/ambari-agent:latest
+  image: cloudchchen/ambari-agent
   privileged: true
   volumes:
   - /hadoop:/hadoop
-  - /var/lib/nvidia-docker/volumes/nvidia_driver/361.45.18:/usr/local/nvidia:ro
-  pid: host
-  dns_search:
-  - service.consul
-  - node.dc1.consul
-  dns:
-  - ${consul_dns_ip}
+  - /var/lib/nvidia-docker/volumes/nvidia_driver/361.45.18:/usr/local/nvidia:ro
 amb-server:
   ports:
   - 8080:8080/tcp
-  labels:
-    io.rancher.container.pull_image: always
-  command:
-  - systemd.setenv=CLOUD_PLATFORM=RANCHER
-  - systemd.setenv=POSTGRES_DB=amb-db
-#  - systemd.setenv=USE_CONSUL_DNS=false
-#  - systemd.setenv=CONSUL_DNS_IP=${consul_dns_ip}
-  image: cloudchchen/ambari-server:latest
-  privileged: true
-  links:
-  - amb-db:amb-db
   dns_search:
   - service.consul
   - node.dc1.consul
-  dns:
-  - ${consul_dns_ip}
-#consul-dns:
-#  labels:
-#    io.rancher.container.pull_image: always
-#  command:
-#  - -server
-#  - -bootstrap
-#  image: sequenceiq/consul:v0.5.0-v6
-provision:
   labels:
     io.rancher.container.pull_image: always
-    io.rancher.container.start_once: 'true'
-  tty: true
-  entrypoint:
-  - /bin/bash
-  image: hortonworks/ambari-server
+  dns:
+  - 10.42.52.130
+  command:
+  - systemd.setenv=CLOUD_PLATFORM=RANCHER
+  - systemd.setenv=POSTGRES_DB=amb-db
+  image: cloudchchen/ambari-server
   links:
-  - amb-server:ambariserver
-  stdin_open: true
-  environment:
-    EXPECTED_HOST_COUNT: ${node_count}
-    BLUEPRINT: ${blueprint}
+  - amb-db:amb-db
+  privileged: true
+
