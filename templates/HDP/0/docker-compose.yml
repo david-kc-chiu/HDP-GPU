@@ -18,14 +18,14 @@ amb-agent:
     io.rancher.scheduler.global: 'true'
     io.rancher.container.pull_image: always
   dns:
-  - 10.42.52.130
+  - 10.42.180.89
   command:
   - systemd.setenv=CLOUD_PLATFORM=RANCHER
   image: cloudchchen/ambari-agent
   privileged: true
   volumes:
   - /hadoop:/hadoop
-  - /var/lib/nvidia-docker/volumes/nvidia_driver/361.45.18:/usr/local/nvidia:ro
+  - /var/lib/nvidia-docker/volumes/nvidia_driver/361.45.18:/usr/local/nvidia:ro
 amb-server:
   ports:
   - 8080:8080/tcp
@@ -35,7 +35,7 @@ amb-server:
   labels:
     io.rancher.container.pull_image: always
   dns:
-  - 10.42.52.130
+  - 10.42.180.89
   command:
   - systemd.setenv=CLOUD_PLATFORM=RANCHER
   - systemd.setenv=POSTGRES_DB=amb-db
