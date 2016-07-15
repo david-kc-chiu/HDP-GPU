@@ -18,10 +18,10 @@ amb-agent:
     io.rancher.scheduler.global: 'true'
     io.rancher.container.pull_image: always
   dns:
-  - 10.42.180.89
+  - ${consul_dns_ip}
   command:
   - systemd.setenv=CLOUD_PLATFORM=RANCHER
-  image: cloudchchen/ambari-agent
+  image: davidchiu/ambri-agent
   privileged: true
   volumes:
   - /hadoop:/hadoop
@@ -35,7 +35,7 @@ amb-server:
   labels:
     io.rancher.container.pull_image: always
   dns:
-  - 10.42.180.89
+  - ${consul_dns_ip}
   command:
   - systemd.setenv=CLOUD_PLATFORM=RANCHER
   - systemd.setenv=POSTGRES_DB=amb-db
